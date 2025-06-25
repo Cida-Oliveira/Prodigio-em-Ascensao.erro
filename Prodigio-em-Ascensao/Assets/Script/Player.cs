@@ -21,7 +21,8 @@ public class Player : MonoBehaviour
         rig = GetComponent<Rigidbody2D>();
     }
 
-    void Update()
+    [System.Obsolete]
+    private void Update()
     {
 
         Move(); //chama o método Move a cada frame para atualizar o movimento do player
@@ -34,33 +35,30 @@ public class Player : MonoBehaviour
         }
     }
 
-    void Move() // Esse método aqui cuida do movimento do personagem.
+    [System.Obsolete]
+    private void Move() // Esse método aqui cuida do movimento do personagem.
 
     {
         // Aqui a gente pega o input do teclado: seta esquerda, seta direita, A ou D.
         // GetAxisRaw é mais direto – retorna -1 se for pra esquerda, 1 pra direita e 0 se nada for pressionado.
-        Vector3 mov = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, 0f);
+        float input = Input.GetAxisRaw("Horizontal");
 
-        // Com esse valor de movimento, a gente muda a posição do personagem.
-        // Time.deltaTime deixa o movimento suave e consistente, independente da taxa de quadros do jogo (FPS).
-        transform.position += mov * Time.deltaTime * velocidade;
+        // com esse valor de input, a gente aplica uma velocidade no Rigidbody
+        // isso garante que o movimento siga as regras da física do Unity
+        rig.velocity = new Vector2(input * velocidade, rig.velocity.y);
 
-        // Se o jogador estiver apertando pra direita...
-        if (Input.GetAxisRaw("Horizontal") > 0f)
+        // se o jogador estiver apertando pra direita...
+        if (input > 0f)
         {
-            // ...fazemos o personagem olhar pra frente (direita).
+            // ...fazemos o personagem olhar pra frente (direita)
             transform.eulerAngles = new Vector3(0f, 0f, 0f);
-
-
         }
 
-        // Se o jogador estiver apertando pra esquerda...
-        if (Input.GetAxisRaw("Horizontal") < 0f)
+        // se o jogador estiver apertando pra esquerda...
+        else if (input < 0f)
         {
-            // ...viramos ele pra esquerda (gira no eixo Y).
+            // ...viramos ele pra esquerda (gira no eixo Y)
             transform.eulerAngles = new Vector3(0f, 180f, 0f);
-
-
         }
     }
 
@@ -98,22 +96,16 @@ public class Player : MonoBehaviour
             isJump = false;
             doubleJump = false; // reseta o double jump ao tocar no chão
         }
-
-        if (collision.gameObject.CompareTag("Plataforma"))
-        {
-            StartCoroutine(SetarPaiDepois(collision.transform)); //pesonagem gruda na plataforma
-        }
     }
 
-    // Detecta quando o personagem sai do chão
+
+    // Detecta quando o personagem sai do chão e da plataforma
     void OnCollisionExit2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Chão"))
         {
             isJump = true;
         }
-
-
     }
 
     private void CollectCoin()
@@ -136,11 +128,5 @@ public class Player : MonoBehaviour
         {
             coinColetar = null;
         }
-    }
-
-    IEnumerator SetarPaiDepois(Transform novaPlataforma)
-    {
-        yield return null; // espera um frame
-        transform.parent = novaPlataforma;
     }
 }
