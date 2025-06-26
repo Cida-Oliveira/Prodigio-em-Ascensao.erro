@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class Camera : MonoBehaviour
@@ -6,13 +7,26 @@ public class Camera : MonoBehaviour
     public float minX, maxX;
     public float timeLerp;
 
+    private Player playerScript;
+    private float yFixo = -0.5f;
+    private bool liberarY = false;
+
+    private void Start()
+    {
+        playerScript = player.GetComponent<Player>();
+    } 
     private void FixedUpdate()
     {
-        // Segue o jogador no X e Y, mantendo a câmera atrás no Z
-        Vector3 targetPosition = player.position + new Vector3(0, 0, -10);
+        if (playerScript.doubleJump)
+        {
+            liberarY = true;
+        }
 
-        // Faz uma transição suave da posição atual para a nova
-        Vector3 smoothPosition = Vector3.Lerp(transform.position, targetPosition, timeLerp);
+        float alvoY = liberarY ? player.position.y : yFixo;
+
+        Vector3 targentPosition = new Vector3(player.position.x, alvoY, -10f);
+
+        Vector3 smoothPosition = Vector3.Lerp(transform.position, targentPosition, timeLerp);
 
         // Limita o X dentro dos valores definidos
         float clampedX = Mathf.Clamp(smoothPosition.x, minX, maxX);
