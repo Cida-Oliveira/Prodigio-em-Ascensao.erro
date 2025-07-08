@@ -538,7 +538,6 @@ MonoBehaviour:
   player: {fileID: 1806193822}
   minX: -0.5
   maxX: 1e+20
-  minY: -0.5
   timeLerp: 1e+17
 --- !u!4 &601155187 stripped
 Transform:
