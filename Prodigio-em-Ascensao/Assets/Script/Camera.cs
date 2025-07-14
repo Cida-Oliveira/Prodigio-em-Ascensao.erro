@@ -10,6 +10,7 @@ public class Camera : MonoBehaviour
     private Player playerScript;
     private float yFixo = -0.5f;
     private bool liberarY = false;
+    internal static object main;
 
     private void Start()
     {
